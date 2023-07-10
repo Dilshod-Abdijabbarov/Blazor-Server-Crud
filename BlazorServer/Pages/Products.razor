@@ -1,0 +1,41 @@
+﻿@page "/products"
+@inherits ProductsBase
+@inject NavigationManager NavigationManager
+<h3>Products</h3>
+
+@if(Products != null)
+{
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Products)
+        {
+            <tr>
+                <td>@product.Id</td>
+                <td>@product.Name</td>
+                <td>@product.Description</td>
+                <td>@product.Price</td>
+
+                    <td>
+                        <button class="btn btn-primary"
+                        @onclick="(()=>ShowProduct(product.Id))">
+                            Show
+                        </button>
+                    </td>
+            </tr>
+        }
+    </tbody>
+</table>
+}
+else
+{
+    <h4>Loading...</h4>
+}
