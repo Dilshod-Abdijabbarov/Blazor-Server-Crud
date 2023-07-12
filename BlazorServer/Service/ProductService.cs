@@ -1,10 +1,11 @@
 ﻿using BlazorServer.Models;
+using BlazorServer.Pages;
 using System.Net;
 using System.Net.Http.Json;
 using static System.Net.WebRequestMethods;
 
 namespace BlazorServer.Service
-{
+{ 
     public class ProductService : IProductService
     {
         private readonly HttpClient httpClient;
@@ -13,18 +14,29 @@ namespace BlazorServer.Service
         {
             this.httpClient = httpClient;
         }
+
         public async Task<Product> CreateProduct(Product product)
         {
-            await httpClient.PostAsJsonAsync<Product>("api/product",product);
+            await httpClient.PostAsJsonAsync<Product>("api/product", product);
 
             return product;
         }
 
         public async Task<Product> DeleteProduct(int id)
-        {
-            return await httpClient.DeleteFromJsonAsync<Product>($"api/Product/deleteproduct/{id}");
-        }
+        {           
+            var isdelete = await httpClient.DeleteAsync($"api/Product/deleteproduct/{id}");
 
+            if (isdelete.StatusCode == HttpStatusCode.OK)
+            {
+                return await isdelete.Content.ReadFromJsonAsync<Product>();
+            }
+            else
+            {
+                return null;
+            }
+            
+        }
+       
         public async Task<IEnumerable<Product>> GetProducts()
         {
             return await httpClient.GetFromJsonAsync<List<Product>>("api/Product");
@@ -40,14 +52,16 @@ namespace BlazorServer.Service
             }
             else
             {
-            return null;
+                return null;
             }
         }
+            
+           
 
         public async Task<Product> UpdateProduct(int id, Product product)
         {
             await httpClient.PutAsJsonAsync($"api/Product/updateproduct/{id}", product);
-            
+
             return product;
         }
     }
